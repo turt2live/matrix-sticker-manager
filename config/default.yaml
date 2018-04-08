@@ -1,0 +1,35 @@
+homeserverUrl: "https://t2bot.io"
+accessToken: "YOUR_TOKEN_HERE"
+
+# The webserver settings
+webserver:
+  port: 8082
+  bind: 0.0.0.0
+
+  # The public URL is used to provide links to users who generate sticker packs
+  publicUrl: 'https://stickers.t2bot.io/'
+
+# Media repository settings
+media:
+  # Set to true to clone uploaded media on your media repository.
+  # Requires turt2live/matrix-media-repo
+  useLocalCopy: false
+
+  # Set to true to use the server-side media info to check the images.
+  # Requires turt2live/matrix-media-repo
+  useMediaInfo: false
+
+# The database options
+database:
+  # The relative path to the sqlite database
+  file: "stickerbot.db"
+
+# Settings for controlling how logging works
+logging:
+  file: logs/stickerbot.log
+  console: true
+  consoleLevel: info
+  fileLevel: verbose
+  rotate:
+    size: 52428800 # bytes, default is 50mb
+    count: 5
