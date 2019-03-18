@@ -60,6 +60,10 @@ export class StickerStore {
             }
         });
 
+        const userPl = {};
+        userPl[await this.client.getUserId()] = 100;
+        userPl[pack.creatorId] = 50;
+
         const roomId = await this.client.createRoom({
             name: pack.name,
             room_alias_name: "_stickerpack_" + pack.id,
@@ -70,9 +74,7 @@ export class StickerStore {
                 },
             },
             power_level_content_override: {
-                users: {
-                    "@stickers:dev.t2host.io": 100,
-                },
+                users: userPl,
                 users_default: 0,
                 events: {
                     "m.room.name": 100,
