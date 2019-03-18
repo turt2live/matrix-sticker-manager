@@ -1,5 +1,5 @@
-import { Appservice, LogService, MatrixClient } from "matrix-bot-sdk";
-import { StickerStore } from "../storage/StickerStore";
+import { Appservice, LogService } from "matrix-bot-sdk";
+import { StickerStore } from "../db/StickerStore";
 
 export default class Webserver {
 

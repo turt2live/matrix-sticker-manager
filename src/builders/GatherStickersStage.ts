@@ -1,7 +1,7 @@
 import { LogService, MatrixClient } from "matrix-bot-sdk";
 import { StickerPackBuilder } from "./builder";
 import config from "../config";
-import { StickerMetadata } from "../storage/StickerStore";
+import { StickerMetadata } from "../db/StickerStore";
 
 export class GatherStickersStage implements StickerPackBuilder {
 

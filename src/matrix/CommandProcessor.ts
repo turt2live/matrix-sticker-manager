@@ -2,7 +2,7 @@ import { LogService, MatrixClient } from "matrix-bot-sdk";
 import * as striptags from "striptags";
 import { BuilderRegistry } from "../bot/BuilderRegistry";
 import { NewPackBuilder } from "../builders/NewPackBuilder";
-import { StickerStore } from "../storage/StickerStore";
+import { StickerStore } from "../db/StickerStore";
 
 export class CommandProcessor {
     constructor(private client: MatrixClient, private store: StickerStore) {

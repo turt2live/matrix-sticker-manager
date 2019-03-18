@@ -3,7 +3,7 @@ import { LogService, MatrixClient } from "matrix-bot-sdk";
 import { GatherStickersStage } from "./GatherStickersStage";
 import * as randomString from "random-string";
 import config from "../config";
-import { StickerMetadata, StickerStore } from "../storage/StickerStore";
+import { StickerMetadata, StickerStore } from "../db/StickerStore";
 
 
 export class NewPackBuilder implements StickerPackBuilder {

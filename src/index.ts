@@ -7,7 +7,7 @@ import { BuilderRegistry } from "./bot/BuilderRegistry";
 import { LogService } from "matrix-bot-sdk/lib/logging/LogService";
 import Webserver from "./web/webserver";
 import * as path from "path";
-import { StickerStore } from "./storage/StickerStore";
+import { StickerStore } from "./db/StickerStore";
 
 async function run() {
     // Cheat and use a client to get the user ID for the appservice bot
