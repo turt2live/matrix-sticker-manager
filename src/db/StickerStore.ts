@@ -69,6 +69,28 @@ export class StickerStore {
                     pack_author: pack.creatorId,
                 },
             },
+            power_level_content_override: {
+                users: {
+                    "@stickers:dev.t2host.io": 100,
+                },
+                users_default: 0,
+                events: {
+                    "m.room.name": 100,
+                    "m.room.power_levels": 100,
+                    "m.room.history_visibility": 100,
+                    "m.room.canonical_alias": 100,
+                    "m.room.avatar": 100,
+                    "io.t2bot.stickers.cache": 100,
+                    "io.t2bot.stickers.metadata": 100,
+                    "io.t2bot.stickers.sticker": 100,
+                },
+                events_default: 100,
+                state_default: 100,
+                ban: 100,
+                kick: 100,
+                redact: 100,
+                invite: 0
+            },
             preset: "public_chat",
             initial_state: [
                 {
