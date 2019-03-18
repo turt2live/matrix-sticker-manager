@@ -59,7 +59,7 @@ export class GatherStickersStage implements StickerPackBuilder {
         if (config.media.useMediaInfo) {
             try {
                 LogService.info("GatherStickersStage", "Requesting media info for " + mxc);
-                const response = await this.client.doRequest("GET", "/_matrix/media/r0/info/" + origin + "/" + mediaId);
+                const response = await this.client.doRequest("GET", "/_matrix/media/unstable/info/" + origin + "/" + mediaId);
                 if (response['content_type'] !== "image/png" || !response['width'] || !response['height']) {
                     LogService.warn("GatherStickersStage", "Media info for " + mxc + " indicates the file is invalid in " + this.roomId);
                     return this.client.sendNotice(this.roomId, "Please upload a PNG image for your sticker.");
@@ -84,7 +84,7 @@ export class GatherStickersStage implements StickerPackBuilder {
         if (config.media.useLocalCopy) {
             try {
                 LogService.info("GatherStickersStage", "Requesting local copy of " + contentUri);
-                const response = await this.client.doRequest("GET", "/_matrix/media/r0/local_copy/" + origin + "/" + mediaId);
+                const response = await this.client.doRequest("GET", "/_matrix/media/unstable/local_copy/" + origin + "/" + mediaId);
                 contentUri = response["content_uri"];
                 LogService.info("GatherStickersStage", "Local copy for " + mxc + " is " + contentUri);
             } catch (err) {
