@@ -39,5 +39,5 @@ namespaces:
 
 ```
 docker build -t turt2live/matrix-sticker-manager .
-docker run -v /app/config/production.yaml:config.yaml -v /app/storage:storage -p 8082:8082 turt2live/matrix-sticker-manager
+docker run -v config.yaml:/app/config/production.yaml -v storage:/app/storage -p 8082:8082 turt2live/matrix-sticker-manager
 ```
