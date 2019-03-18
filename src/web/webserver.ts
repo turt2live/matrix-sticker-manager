@@ -1,24 +1,23 @@
-import * as express from "express";
-import config from "../config";
-import { LogService } from "matrix-js-snippets";
-import Stickerpack from "../db/models/Stickerpack";
-import StickerRecord from "../db/models/StickerRecord";
+import { Appservice, LogService, MatrixClient } from "matrix-bot-sdk";
+import { StickerStore } from "../storage/StickerStore";
 
-class _Webserver {
+export default class Webserver {
+
+    private static instance: Webserver;
+
     private app: any;
 
-    constructor() {
-        this.app = express();
+    constructor(private appservice: Appservice, private store: StickerStore) {
+        this.app = (<any>appservice).app; // HACK: Private variable access
 
-        this.app.get('/:userId/:packId', this.getStickerpack.bind(this));
+        this.app.get('/pack/:userId/:packId', this.getStickerpack.bind(this));
 
         // TODO: Serve a home page of some kind. Stickerpack browser?
     }
 
-    public start() {
-        this.app.listen(config.webserver.port, config.webserver.bind, () => {
-            LogService.info("webserver", "Listening on " + config.webserver.bind + ":" + config.webserver.port);
-        });
+    public static begin(appservice: Appservice, store: StickerStore) {
+        if (Webserver.instance) throw new Error("Already started");
+        Webserver.instance = new Webserver(appservice, store);
     }
 
     private async getStickerpack(req, res) {
@@ -30,7 +29,7 @@ class _Webserver {
         const replyJson = accept.indexOf("application/json") !== -1 || packId.endsWith(".json");
         if (packId.endsWith(".json")) packId = packId.substring(0, packId.length - ".json".length);
 
-        const pack = await Stickerpack.findOne({where: {creatorId: userId, id: packId}});
+        const pack = await this.store.getStickerpack(packId);
         if (!pack) {
             // TODO: A real 404 page
             res.status(404);
@@ -38,7 +37,12 @@ class _Webserver {
             return;
         }
 
-        const stickers = await StickerRecord.findAll({where: {packId: pack.id}});
+        if (pack.creatorId !== userId) {
+            // TODO: A real 400 page
+            res.status(400);
+            res.send({"TODO": "A real 400 page"});
+            return;
+        }
 
         if (replyJson) {
             LogService.info("Webserver", "Serving JSON for pack " + pack.id);
@@ -51,13 +55,18 @@ class _Webserver {
                     type: "mx-user",
                     id: pack.creatorId,
                 },
-                stickers: stickers.map(s => {
+                stickers: pack.stickers.map(s => {
                     return {
                         id: s.id, // arbitrary
                         description: s.description,
                         contentUri: s.contentUri,
                     };
                 }),
+                subscription: {
+                    roomId: pack.roomId,
+                    roomAlias: pack.roomAlias,
+                    public: true,
+                },
             });
             return;
         }
@@ -66,5 +75,3 @@ class _Webserver {
         res.send({"TODO": "A real preview page"});
     }
 }
-
-export const Webserver = new _Webserver();

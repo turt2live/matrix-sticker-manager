@@ -1,24 +1,19 @@
-import { MatrixClient } from "matrix-bot-sdk";
+import { LogService, MatrixClient } from "matrix-bot-sdk";
 import { StickerPackBuilder } from "./builder";
 import config from "../config";
-import { LogService } from "matrix-js-snippets";
-
-export interface Sticker {
-    description: string;
-    contentUri: string;
-}
+import { StickerMetadata } from "../storage/StickerStore";
 
 export class GatherStickersStage implements StickerPackBuilder {
 
-    public stickers: Sticker[] = [];
-    private currentSticker: Sticker = {description: "", contentUri: ""};
+    public stickers: StickerMetadata[] = [];
+    private currentSticker: StickerMetadata = {description: "", contentUri: ""};
     private expectingImage = true;
-    private resolveFn: (stickers: Sticker[]) => void;
+    private resolveFn: (stickers: StickerMetadata[]) => void;
 
     constructor(private client: MatrixClient, private roomId: string) {
     }
 
-    public start(): Promise<Sticker[]> {
+    public start(): Promise<StickerMetadata[]> {
         return new Promise((resolve, _reject) => {
             this.resolveFn = resolve;
         });

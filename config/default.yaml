@@ -1,5 +1,9 @@
-homeserverUrl: "https://t2bot.io"
-accessToken: "YOUR_TOKEN_HERE"
+# The application service settings
+appservice:
+  domainName: "t2bot.io"
+  homeserverUrl: "https://t2bot.io"
+  asToken: "SECRET_TOKEN_HERE"
+  hsToken: "DIFFERENT_TOKEN_HERE"
 
 # The webserver settings
 webserver:
@@ -19,17 +23,5 @@ media:
   # Requires turt2live/matrix-media-repo
   useMediaInfo: false
 
-# The database options
-database:
-  # The relative path to the sqlite database
-  file: "stickerbot.db"
-
-# Settings for controlling how logging works
-logging:
-  file: logs/stickerbot.log
-  console: true
-  consoleLevel: info
-  fileLevel: verbose
-  rotate:
-    size: 52428800 # bytes, default is 50mb
-    count: 5
+# Where to store misc files
+dataPath: "/etc/stickerbot/data"

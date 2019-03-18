@@ -1,10 +1,9 @@
 import { StickerPackBuilder } from "./builder";
-import { MatrixClient } from "matrix-bot-sdk";
-import { GatherStickersStage, Sticker } from "./GatherStickersStage";
+import { LogService, MatrixClient } from "matrix-bot-sdk";
+import { GatherStickersStage } from "./GatherStickersStage";
 import * as randomString from "random-string";
-import Stickerpack from "../db/models/Stickerpack";
-import StickerRecord from "../db/models/StickerRecord";
 import config from "../config";
+import { StickerMetadata, StickerStore } from "../storage/StickerStore";
 
 
 export class NewPackBuilder implements StickerPackBuilder {
@@ -13,7 +12,7 @@ export class NewPackBuilder implements StickerPackBuilder {
     private expectingName = true;
     private gatherStage: GatherStickersStage;
 
-    constructor(private client: MatrixClient, private roomId: string) {
+    constructor(private client: MatrixClient, private roomId: string, private store: StickerStore) {
         client.sendNotice(roomId, "Woot! A new sticker pack. What should we call it?");
         this.gatherStage = new GatherStickersStage(client, roomId);
     }
@@ -33,24 +32,23 @@ export class NewPackBuilder implements StickerPackBuilder {
         }
     }
 
-    private async createStickerPack(stickers: Sticker[]): Promise<any> {
+    private async createStickerPack(stickers: StickerMetadata[]): Promise<any> {
         const members = await this.client.getJoinedRoomMembers(this.roomId);
         const selfId = await this.client.getUserId();
         const creatorId = members.filter(m => m !== selfId)[0];
         if (!creatorId) throw new Error("Could not find a user ID to own this sticker pack");
 
         const packId = (randomString({length: 10}) + "-" + this.name.replace(/[^a-zA-Z0-9-]/g, '-')).substring(0, 30);
-        const pack = await Stickerpack.create({id: packId, creatorId: creatorId, name: this.name});
 
-        for (const sticker of stickers) {
-            await StickerRecord.create({
-                packId: packId,
-                description: sticker.description,
-                contentUri: sticker.contentUri,
-            });
-        }
+        const pack = await this.store.createStickerpack({
+            id: packId,
+            name: this.name,
+            creatorId: creatorId,
+            stickers: stickers,
+        });
+        LogService.info("NewPackBuilder", `Pack for ${creatorId} created in room ${pack.roomId}`);
 
-        const slug = `${creatorId}/${packId}`;
+        const slug = `pack/${creatorId}/${packId}`;
         const baseUrl = config.webserver.publicUrl;
         const url = (baseUrl.endsWith("/") ? baseUrl : baseUrl + "/") + slug;
         return this.client.sendNotice(this.roomId, "Awesome! I've created your sticker pack and published it here: " + url);

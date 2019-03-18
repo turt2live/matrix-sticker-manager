@@ -1,9 +1,12 @@
 import * as config from "config";
-import { LogConfig } from "matrix-js-snippets";
 
 interface IConfig {
-    homeserverUrl: string;
-    accessToken: string;
+    appservice: {
+        domainName: string;
+        homeserverUrl: string;
+        asToken: string;
+        hsToken: string;
+    };
     webserver: {
         port: number;
         bind: string;
@@ -13,10 +16,7 @@ interface IConfig {
         useLocalCopy: boolean;
         useMediaInfo: boolean;
     };
-    database: {
-        file: string;
-    };
-    logging: LogConfig;
+    dataPath: string;
 }
 
 export default <IConfig>config;

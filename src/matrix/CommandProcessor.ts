@@ -1,11 +1,11 @@
-import { MatrixClient } from "matrix-bot-sdk";
-import { LogService } from "matrix-js-snippets";
+import { LogService, MatrixClient } from "matrix-bot-sdk";
 import * as striptags from "striptags";
 import { BuilderRegistry } from "../bot/BuilderRegistry";
 import { NewPackBuilder } from "../builders/NewPackBuilder";
+import { StickerStore } from "../storage/StickerStore";
 
 export class CommandProcessor {
-    constructor(private client: MatrixClient) {
+    constructor(private client: MatrixClient, private store: StickerStore) {
     }
 
     public async tryCommand(roomId: string, event: any): Promise<any> {
@@ -30,7 +30,7 @@ export class CommandProcessor {
                 return this.client.sendNotice(roomId, "Oops! It looks like you're already doing something. Please finish your current operation before creating a new sticker pack.");
             }
 
-            BuilderRegistry.register(roomId, new NewPackBuilder(this.client, roomId)); // sends a welcome message
+            BuilderRegistry.register(roomId, new NewPackBuilder(this.client, roomId, this.store)); // sends a welcome message
         } else if (command === "cancel") {
             if (BuilderRegistry.hasBuilder(roomId)) {
                 BuilderRegistry.deregister(roomId);
