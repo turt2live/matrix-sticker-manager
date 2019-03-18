@@ -34,3 +34,10 @@ namespaces:
     - exclusive: true
       regex: "#_stickerpack_.+:t2bot.io"
 ```
+
+# Docker
+
+```
+docker build -t turt2live/matrix-sticker-manager .
+docker run -v /app/config/production.yaml:config.yaml -v /app/storage:storage -p 8082:8082 turt2live/matrix-sticker-manager
+```

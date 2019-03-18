@@ -1,0 +1,6 @@
+.git/
+node_modules/
+storage/
+config/development.yaml
+config/production.yaml
+.idea/
