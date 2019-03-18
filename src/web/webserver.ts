@@ -67,6 +67,12 @@ export default class Webserver {
                     roomAlias: pack.roomAlias,
                     public: true,
                 },
+                "io.t2bot.dimension": {
+                    id: pack.id,
+                    creatorId: pack.creatorId,
+                    roomId: pack.roomId,
+                    roomAlias: pack.roomAlias,
+                },
             });
             return;
         }
