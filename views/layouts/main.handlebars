@@ -40,6 +40,12 @@
             padding: 40px;
         }
     </style>
+
+    {{#if pack}}
+        <meta property="og:title" content="{{pack.name}}" />
+        <meta property="og:description" content="A sticker pack by {{pack.creatorId}} for Matrix" />
+        <meta property="og:image" content="{{pack.stickers.1.contentUrl}}" />
+    {{/if}}
 </head>
 <body>
 
