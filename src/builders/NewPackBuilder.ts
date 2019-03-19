@@ -4,6 +4,7 @@ import { GatherStickersStage } from "./GatherStickersStage";
 import * as randomString from "random-string";
 import config from "../config";
 import { StickerMetadata, StickerStore } from "../db/StickerStore";
+import { BuilderRegistry } from "../bot/BuilderRegistry";
 
 
 export class NewPackBuilder implements StickerPackBuilder {
@@ -51,6 +52,7 @@ export class NewPackBuilder implements StickerPackBuilder {
         const slug = `pack/${creatorId}/${packId}`;
         const baseUrl = config.webserver.publicUrl;
         const url = (baseUrl.endsWith("/") ? baseUrl : baseUrl + "/") + slug;
-        return this.client.sendNotice(this.roomId, "Awesome! I've created your sticker pack and published it here: " + url);
+        await this.client.sendNotice(this.roomId, "Awesome! I've created your sticker pack and published it here: " + url);
+        BuilderRegistry.deregister(this.roomId);
     }
 }
