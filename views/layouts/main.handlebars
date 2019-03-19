@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Matrix Sticker Manager</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Mukta" rel="stylesheet">
+    <style type="text/css">
+        * {
+            font-family: 'Mukta', sans-serif;
+        }
+
+        body, html {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            background-color: #EBEBEB;
+            color: #000;
+        }
+
+        header {
+            padding-bottom: 5px;
+            background: linear-gradient(90deg, rgba(185, 54, 201, 0.7), rgba(79, 174, 255, 0.7));
+        }
+
+        header div {
+            font-size: 25px;
+            padding: 10px 10px 10px 25px;
+            background-color: #fff;
+        }
+
+        header small {
+            display: block;
+            font-size: 12px;
+        }
+
+        .wrapper {
+            display: inline-block;
+            margin: 30px auto auto;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        {{#if pack}}
+            Matrix Stickerpack: {{pack.name}}
+            <small>Created by {{pack.creatorId}}</small>
+        {{else}}
+            Matrix Stickerpacks
+        {{/if}}
+    </div>
+</header>
+
+<div class="wrapper">
+    {{{body}}}
+</div>
+
+</body>
+</html>

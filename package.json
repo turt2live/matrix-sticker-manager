@@ -12,6 +12,8 @@
   "dependencies": {
     "@types/node": "^10.14.1",
     "config": "^3.0.1",
+    "express-handlebars": "^3.0.2",
+    "hbs": "^4.0.3",
     "js-yaml": "^3.12.2",
     "matrix-bot-sdk": "^0.3.4",
     "random-string": "^0.2.0",

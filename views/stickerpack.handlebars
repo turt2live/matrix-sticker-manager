@@ -1,0 +1,51 @@
+<style type="text/css">
+    .stickers {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-content: center;
+        width: 100%;
+    }
+
+    .wrapper {
+        width: 100%;
+        padding: 0;
+    }
+
+    .sticker {
+        background: #fff;
+        border: 1px solid #4062BB33;
+        border-radius: 5px;
+        box-shadow: #4062BB33 5px 5px;
+        transition: all ease 300ms;
+        padding: 25px 5px 5px;
+        width: 200px;
+        height: 200px;
+        text-align: center;
+        margin: 20px;
+    }
+
+    .sticker:hover {
+        border: 1px solid #52489C;
+        box-shadow: #52489C 5px 5px;
+    }
+
+    .sticker img {
+        display: inline-block;
+    }
+
+    .sticker .description {
+        display: block;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<div class="stickers">
+    {{#each pack.stickers}}
+        <div class="sticker">
+            <img src="{{this.contentUrl}}" width="150" height="150" />
+            <span class="description">{{this.description}}</span>
+        </div>
+    {{/each}}
+</div>

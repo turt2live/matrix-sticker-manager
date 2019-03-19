@@ -1,5 +1,9 @@
 import { Appservice, LogService } from "matrix-bot-sdk";
 import { StickerStore } from "../db/StickerStore";
+import * as path from "path";
+import * as exphbs from "express-handlebars";
+import * as express from "express";
+import config from "../config";
 
 export default class Webserver {
 
@@ -10,14 +14,23 @@ export default class Webserver {
     constructor(private appservice: Appservice, private store: StickerStore) {
         this.app = (<any>appservice).app; // HACK: Private variable access
 
-        this.app.get('/pack/:userId/:packId', this.getStickerpack.bind(this));
+        this.app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+        this.app.set('view engine', 'handlebars');
+        //this.app.set('views', path.join(__dirname, 'views'));
 
-        // TODO: Serve a home page of some kind. Stickerpack browser?
+        this.app.get('/pack/:userId/:packId', this.getStickerpack.bind(this));
+        this.app.get('/', this.getIndex.bind(this));
+
+        this.app.use(express.static(path.join(__dirname, '..', '..', 'views', 'assets')))
     }
 
     public static begin(appservice: Appservice, store: StickerStore) {
         if (Webserver.instance) throw new Error("Already started");
         Webserver.instance = new Webserver(appservice, store);
+    }
+
+    private async getIndex(req, res) {
+        res.status(200).send({"TODO": "This page"});
     }
 
     private async getStickerpack(req, res) {
@@ -31,16 +44,20 @@ export default class Webserver {
 
         const pack = await this.store.getStickerpack(packId);
         if (!pack) {
-            // TODO: A real 404 page
-            res.status(404);
-            res.send({"TODO": "A real 404 page"});
+            if (replyJson) {
+                res.status(404).send({error: "Pack not found", errcode: "M_NOT_FOUND"});
+            } else {
+                res.status(404).render('404', {layout: 'error'});
+            }
             return;
         }
 
         if (pack.creatorId !== userId) {
-            // TODO: A real 400 page
-            res.status(400);
-            res.send({"TODO": "A real 400 page"});
+            if (replyJson) {
+                res.status(400).send({error: "Creator != requested user ID", errcode: "M_BAD_REQUEST"});
+            } else {
+                res.status(400).render('404', {layout: 'error'});
+            }
             return;
         }
 
@@ -77,7 +94,10 @@ export default class Webserver {
             return;
         }
 
-        // TODO: A real preview page
-        res.send({"TODO": "A real preview page"});
+        const renderVars = JSON.parse(JSON.stringify(pack));
+        renderVars.stickers = renderVars.stickers.map(s => Object.assign({
+            contentUrl: `${config.appservice.homeserverUrl}/_matrix/media/r0/download/${s.contentUri.substring("mxc://".length)}`,
+        }, s));
+        res.render('stickerpack', {pack: renderVars});
     }
 }
