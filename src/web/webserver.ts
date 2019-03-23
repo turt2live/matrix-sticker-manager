@@ -72,6 +72,7 @@ export default class Webserver {
                     type: "mx-user",
                     id: pack.creatorId,
                 },
+                licenseName: pack.license,
                 stickers: pack.stickers.map(s => {
                     return {
                         id: s.id, // arbitrary
@@ -89,6 +90,7 @@ export default class Webserver {
                     creatorId: pack.creatorId,
                     roomId: pack.roomId,
                     roomAlias: pack.roomAlias,
+                    licenseName: pack.license,
                 },
             });
             return;

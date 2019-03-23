@@ -5,6 +5,7 @@ import * as randomString from "random-string";
 import config from "../config";
 import { StickerMetadata, StickerStore } from "../db/StickerStore";
 import { BuilderRegistry } from "../bot/BuilderRegistry";
+import { StickerLicenseStage } from "./StickerLicenseStage";
 
 
 export class NewPackBuilder implements StickerPackBuilder {
@@ -12,10 +13,14 @@ export class NewPackBuilder implements StickerPackBuilder {
     private name: string;
     private expectingName = true;
     private gatherStage: GatherStickersStage;
+    private licenseStage: StickerLicenseStage;
+
+    private currentStage: StickerPackBuilder;
 
     constructor(private client: MatrixClient, private roomId: string, private store: StickerStore) {
         client.sendNotice(roomId, "Woot! A new sticker pack. What should we call it?");
         this.gatherStage = new GatherStickersStage(client, roomId);
+        this.licenseStage = new StickerLicenseStage(client, roomId);
     }
 
     public async handleEvent(event: any): Promise<any> {
@@ -26,10 +31,17 @@ export class NewPackBuilder implements StickerPackBuilder {
 
             this.name = event['content']['body'];
             this.expectingName = false;
-            this.gatherStage.start().then(stickers => this.createStickerPack(stickers));
-            return this.client.sendNotice(this.roomId, "Thanks! Now send me your first sticker. The image should be a PNG image (with a transparent background) and should be 512x512.\n\nThe sticker should also have a white border around it.");
+
+            this.currentStage = this.licenseStage;
+            return this.client.sendNotice(this.roomId, "Thanks! Before I ask you for stickers, I need to know the license you'd like to put on them. Please say the name of the license you'd like to use.")
+                .then(() => this.licenseStage.start())
+                .then(() => {
+                    this.currentStage = this.gatherStage;
+                    this.gatherStage.start().then(stickers => this.createStickerPack(stickers));
+                    return this.client.sendNotice(this.roomId, "Thanks! Now send me your first sticker. The image should be a PNG image (with a transparent background) and should be 512x512.\n\nThe sticker should also have a white border around it.");
+                });
         } else {
-            return this.gatherStage.handleEvent(event);
+            return this.currentStage.handleEvent(event);
         }
     }
 
@@ -46,6 +58,7 @@ export class NewPackBuilder implements StickerPackBuilder {
             name: this.name,
             creatorId: creatorId,
             stickers: stickers,
+            license: this.licenseStage.license.name,
         });
         LogService.info("NewPackBuilder", `Pack for ${creatorId} created in room ${pack.roomId}`);
 

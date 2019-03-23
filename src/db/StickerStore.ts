@@ -18,6 +18,7 @@ export interface StickerpackMetadata {
     creatorId: string;
     name: string;
     stickers: StickerMetadata[];
+    license: string;
 }
 
 export interface StickerMetadata {
@@ -101,6 +102,7 @@ export class StickerStore {
                     content: {
                         creatorId: pack.creatorId,
                         activeStickers: stickers.map(s => s.id),
+                        license: pack.license,
                     },
                 },
                 ...(stickers.map(s => {
@@ -116,6 +118,7 @@ export class StickerStore {
             creatorId: pack.creatorId,
             name: pack.name,
             stickers: stickers,
+            license: pack.license,
         };
 
         this.packs[pack.id] = finalPack;
@@ -145,6 +148,7 @@ export class StickerStore {
                 content: {
                     creatorId: pack.creatorId,
                     activeStickers: stickers.map(s => s.id),
+                    license: pack.license,
                 },
             },
         ];
@@ -180,6 +184,7 @@ export class StickerStore {
             stickers: [],
             name: nameEvent.name,
             roomAlias: canconicalAliasEvent.alias,
+            license: packEvent.license || "CC BY-NC-SA 4.0",
         };
 
         for (const stickerId of packEvent.activeStickers) {
