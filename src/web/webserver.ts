@@ -68,9 +68,14 @@ export default class Webserver {
                 type: "m.stickerpack",
                 name: pack.name,
                 id: pack.id, // arbitrary
-                author: {
+                creator: {
                     type: "mx-user",
                     id: pack.creatorId,
+                },
+                author: {
+                    type: "external",
+                    name: pack.authorName,
+                    ref: pack.authorUrl,
                 },
                 licenseName: pack.license,
                 stickers: pack.stickers.map(s => {
@@ -91,6 +96,10 @@ export default class Webserver {
                     roomId: pack.roomId,
                     roomAlias: pack.roomAlias,
                     licenseName: pack.license,
+                    author: {
+                        name: pack.authorName,
+                        url: pack.authorUrl,
+                    },
                 },
             });
             return;

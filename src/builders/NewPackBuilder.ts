@@ -6,6 +6,7 @@ import config from "../config";
 import { StickerMetadata, StickerStore } from "../db/StickerStore";
 import { BuilderRegistry } from "../bot/BuilderRegistry";
 import { StickerLicenseStage } from "./StickerLicenseStage";
+import { StickerAuthorStage } from "./StickerAuthorStage";
 
 
 export class NewPackBuilder implements StickerPackBuilder {
@@ -14,6 +15,7 @@ export class NewPackBuilder implements StickerPackBuilder {
     private expectingName = true;
     private gatherStage: GatherStickersStage;
     private licenseStage: StickerLicenseStage;
+    private authorStage: StickerAuthorStage;
 
     private currentStage: StickerPackBuilder;
 
@@ -21,6 +23,7 @@ export class NewPackBuilder implements StickerPackBuilder {
         client.sendNotice(roomId, "Woot! A new sticker pack. What should we call it?");
         this.gatherStage = new GatherStickersStage(client, roomId);
         this.licenseStage = new StickerLicenseStage(client, roomId);
+        this.authorStage = new StickerAuthorStage(client, roomId);
     }
 
     public async handleEvent(event: any): Promise<any> {
@@ -35,6 +38,11 @@ export class NewPackBuilder implements StickerPackBuilder {
             this.currentStage = this.licenseStage;
             return this.client.sendNotice(this.roomId, "Thanks! Before I ask you for stickers, I need to know the license you'd like to put on them. Please say the name of the license you'd like to use.")
                 .then(() => this.licenseStage.start())
+                .then(() => this.client.sendNotice(this.roomId, "Great choice! Who created the stickers you're about to upload? If you're the author, say 'me'."))
+                .then(() => {
+                    this.currentStage = this.authorStage;
+                    return this.authorStage.start();
+                })
                 .then(() => {
                     this.currentStage = this.gatherStage;
                     this.gatherStage.start().then(stickers => this.createStickerPack(stickers));
@@ -59,6 +67,8 @@ export class NewPackBuilder implements StickerPackBuilder {
             creatorId: creatorId,
             stickers: stickers,
             license: this.licenseStage.license.name,
+            authorName: this.authorStage.authorName,
+            authorUrl: this.authorStage.authorUrl,
         });
         LogService.info("NewPackBuilder", `Pack for ${creatorId} created in room ${pack.roomId}`);
 
