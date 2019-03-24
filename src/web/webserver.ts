@@ -106,6 +106,7 @@ export default class Webserver {
         }
 
         const renderVars = JSON.parse(JSON.stringify(pack));
+        renderVars['authorIsCreator'] = pack.authorName === pack.creatorId;
         renderVars.stickers = renderVars.stickers.map(s => Object.assign({
             contentUrl: `${config.appservice.homeserverUrl}/_matrix/media/r0/download/${s.contentUri.substring("mxc://".length)}`,
         }, s));
