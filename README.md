@@ -18,7 +18,7 @@ A matrix service to allow users to make their own sticker packs.
 2. `npm install`
 3. `npm run build`
 4. Copy `config/default.yaml` to `config/production.yaml`
-5. Run the bot with `NODE_ENV=production node index.js`
+5. Run the bot with `NODE_ENV=production node lib/index.js`
 
 You will also need to create an appservice registration file and add it to your homeserver:
 ```yaml
