@@ -6,7 +6,7 @@ import { StickerMetadata } from "../db/StickerStore";
 export class GatherStickersStage implements StickerPackBuilder {
 
     public stickers: StickerMetadata[] = [];
-    private currentSticker: StickerMetadata = {description: "", contentUri: ""};
+    private currentSticker: StickerMetadata = {description: "", contentUri: "", blurhash: null};
     private expectingImage = true;
     private resolveFn: (stickers: StickerMetadata[]) => void;
 
@@ -30,7 +30,7 @@ export class GatherStickersStage implements StickerPackBuilder {
             if (!this.expectingImage) {
                 this.currentSticker.description = event['content']['body'];
                 this.stickers.push(this.currentSticker);
-                this.currentSticker = {description: "", contentUri: ""};
+                this.currentSticker = {description: "", contentUri: "", blurhash: null};
                 this.expectingImage = true;
                 LogService.info("GatherStickersStage", "A sticker has been completed, but not submitted in " + this.roomId);
                 return this.client.sendNotice(this.roomId, "Thanks! Send me another 512x512 PNG for your next sticker or say !done if you've finished.");
@@ -43,6 +43,7 @@ export class GatherStickersStage implements StickerPackBuilder {
         }
 
         const mxc = event['content']['url'];
+        const blurhash = event["content"]["info"]?.["xyz.amorgan.blurhash"];
         if (!mxc.startsWith("mxc://")) {
             LogService.warn("GatherStickersStage", "Not an MXC URI in " + this.roomId);
             return this.client.sendNotice(this.roomId, "That doesn't look like a valid image, sorry.");
@@ -96,7 +97,8 @@ export class GatherStickersStage implements StickerPackBuilder {
 
         this.currentSticker = {
             description: "",
-            contentUri: contentUri,
+            contentUri,
+            blurhash,
         };
         this.expectingImage = false;
         LogService.info("GatherStickersStage", "Asking for a description for the uploaded image in " + this.roomId);

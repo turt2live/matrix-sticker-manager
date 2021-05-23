@@ -26,6 +26,7 @@ export interface StickerpackMetadata {
 export interface StickerMetadata {
     description: string;
     contentUri: string;
+    blurhash?: string;
 }
 
 export class StickerStore {
@@ -58,8 +59,7 @@ export class StickerStore {
             return {
                 id: randomString({length: 64}),
                 packId: pack.id,
-                description: s.description,
-                contentUri: s.contentUri,
+                ...s,
             }
         });
 
