@@ -46,7 +46,7 @@ export class NewPackBuilder implements StickerPackBuilder {
                 .then(() => {
                     this.currentStage = this.gatherStage;
                     this.gatherStage.start().then(stickers => this.createStickerPack(stickers));
-                    return this.client.sendNotice(this.roomId, "Thanks! Now send me your first sticker. The image should be a PNG image (with a transparent background) and should be 512x512.\n\nThe sticker should also have a white border around it.");
+                    return this.client.sendNotice(this.roomId, "Thanks! Now send me your first sticker. The image should be a " + GatherStickersStage.validImageText + " image (with a transparent background) and should be 512x512.\n\nThe sticker should also have a white border around it.");
                 });
         } else {
             return this.currentStage.handleEvent(event);
